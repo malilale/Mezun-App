@@ -2,11 +2,13 @@ package com.mezun.app;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import java.util.regex.Pattern;
 
@@ -14,6 +16,7 @@ public class LoginActivity extends AppCompatActivity {
 
     EditText et_email, et_password;
     Button btn_login;
+    TextView tv_forgotPw, tv_register;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +26,8 @@ public class LoginActivity extends AppCompatActivity {
         et_email = findViewById(R.id.et_email);
         et_password = findViewById(R.id.et_password);
         btn_login = findViewById(R.id.btn_login);
+        tv_forgotPw = findViewById(R.id.tv_forgotpw);
+        tv_register = findViewById(R.id.tv_register);
 
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -43,6 +48,15 @@ public class LoginActivity extends AppCompatActivity {
                     login(email,password); //login user
                 }
 
+            }
+
+        });
+
+        tv_register.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(LoginActivity.this,RegisterActivity.class);
+                startActivity(intent);
             }
         });
     }
