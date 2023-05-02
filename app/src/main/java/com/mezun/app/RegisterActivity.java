@@ -4,14 +4,12 @@ import static androidx.activity.result.contract.ActivityResultContracts.StartAct
 
 import android.Manifest;
 import android.content.ActivityNotFoundException;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -27,22 +25,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -53,6 +48,7 @@ public class RegisterActivity extends AppCompatActivity {
     private ActivityResultLauncher<Intent> CamActivityResultLauncher,galleryActivityResultLauncher;
     public static final int CAMERA_PERM_CODE = 101;
     public static final int GALLERY_PERM_CODE = 102;
+
     private Uri image_uri;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference collectionReference;
@@ -125,15 +121,25 @@ public class RegisterActivity extends AppCompatActivity {
         builder.create().show();
     }
 
+    public Uri getImageUri( Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(RegisterActivity.this.getContentResolver(), inImage, UUID.randomUUID().toString() + ".png", "drawing");
+        return Uri.parse(path);
+    }
+
     private void setCameraIntent() {
         CamActivityResultLauncher = registerForActivityResult(new StartActivityForResult(), result -> {
             if(result.getResultCode() == RESULT_OK && result.getData() != null) {
-                image_uri = result.getData().getData();
-                Bundle bundle = result.getData().getExtras();
+               Bundle bundle = result.getData().getExtras();
                 Bitmap bitmap = (Bitmap) bundle.get("data");
-                addPhoto.setImageBitmap(bitmap);
+                //addPhoto.setImageBitmap(bitmap);
+                image_uri = getImageUri(bitmap);
+                addPhoto.setImageURI(image_uri);
+
             }
         });
+
     }
 
     private void pickFromCamera() {
@@ -189,7 +195,7 @@ public class RegisterActivity extends AppCompatActivity {
             }
         }else if(requestCode == GALLERY_PERM_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                pickFromCamera();
+                pickFromGallery();
             } else {
                 Toast.makeText(this, "Camera Permission is Required to Use camera.", Toast.LENGTH_SHORT).show();
             }
@@ -209,35 +215,36 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void uploadData() {
+        Map<String, String> user = new HashMap<>();
+        user.put("name", et_name.getText().toString());
+        user.put("lastname", et_lastname.getText().toString());
+        user.put("startyear", et_starty.getText().toString());
+        user.put("endyear", et_endy.getText().toString());
+        user.put("email", et_email.getText().toString());
+        user.put("password", et_password.getText().toString());
+        user.put("education", "");
+        user.put("country", "");
+        user.put("city", "");
+        user.put("job", "");
+        user.put("tel", "");
+        if(image_uri!=null){
+            StorageReference filePath = storageRef.child(System.currentTimeMillis() + ".jpg");
+            filePath.putFile(image_uri).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    Task<Uri> downloadUri = filePath.getDownloadUrl();
+                    user.put("imgUrl", downloadUri.toString());
+                }
+            });
+        }else{
+            user.put("imgUrl", "");
+        }
 
-        StorageReference filePath = storageRef.child(System.currentTimeMillis() + ".jpg");
-
-        filePath.putFile(image_uri).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                Task<Uri> downloadUri = filePath.getDownloadUrl();
-
-                Map<String, String> user = new HashMap<>();
-                user.put("name", et_name.getText().toString());
-                user.put("lastname", et_lastname.getText().toString());
-                user.put("startyear", et_starty.getText().toString());
-                user.put("endyear", et_endy.getText().toString());
-                user.put("email", et_email.getText().toString());
-                user.put("password", et_password.getText().toString());
-                user.put("imgUrl", downloadUri.toString());
-                user.put("education", "");
-                user.put("country", "");
-                user.put("city", "");
-                user.put("job", "");
-                user.put("tel", "");
-
-                collectionReference.add(user)
-                        .addOnSuccessListener(documentReference ->
-                                Toast.makeText(RegisterActivity.this,"Başarıyla Kaydedildi", Toast.LENGTH_SHORT).show())
-                        .addOnFailureListener(e ->
-                                Toast.makeText(RegisterActivity.this,"Kaydedilemedi", Toast.LENGTH_SHORT).show());
-            }
-        });
-    }
+        collectionReference.add(user)
+                .addOnSuccessListener(documentReference ->
+                        Toast.makeText(RegisterActivity.this,"Başarıyla Kaydedildi", Toast.LENGTH_SHORT).show())
+                .addOnFailureListener(e ->
+                        Toast.makeText(RegisterActivity.this,"Kaydedilemedi", Toast.LENGTH_SHORT).show());
+        }
 
 
     private void sendToMain() {
