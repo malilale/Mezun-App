@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -26,9 +27,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -40,6 +53,10 @@ public class RegisterActivity extends AppCompatActivity {
     private ActivityResultLauncher<Intent> CamActivityResultLauncher,galleryActivityResultLauncher;
     public static final int CAMERA_PERM_CODE = 101;
     public static final int GALLERY_PERM_CODE = 102;
+    private Uri image_uri;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private CollectionReference collectionReference;
+    private StorageReference storageRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +76,8 @@ public class RegisterActivity extends AppCompatActivity {
         setCameraIntent();
         setPickFromGalleryIntent();
 
+        storageRef = FirebaseStorage.getInstance().getReference("Profile Images");
+        collectionReference = db.collection("Users");
         addPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -94,16 +113,13 @@ public class RegisterActivity extends AppCompatActivity {
         String options[] = {"Kamera","Galeri"};
         AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this);
         builder.setTitle("Profil Fotoğrafı");
-        builder.setItems(options, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                if(i == 0){
-                    //Camera
-                    pickFromCamera();
-                }else{
-                    //Gallery
-                    pickFromGallery();
-                }
+        builder.setItems(options, (dialogInterface, i) -> {
+            if(i == 0){
+                //Camera
+                pickFromCamera();
+            }else{
+                //Gallery
+                pickFromGallery();
             }
         });
         builder.create().show();
@@ -112,6 +128,7 @@ public class RegisterActivity extends AppCompatActivity {
     private void setCameraIntent() {
         CamActivityResultLauncher = registerForActivityResult(new StartActivityForResult(), result -> {
             if(result.getResultCode() == RESULT_OK && result.getData() != null) {
+                image_uri = result.getData().getData();
                 Bundle bundle = result.getData().getExtras();
                 Bitmap bitmap = (Bitmap) bundle.get("data");
                 addPhoto.setImageBitmap(bitmap);
@@ -139,7 +156,7 @@ public class RegisterActivity extends AppCompatActivity {
         galleryActivityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(), result -> {
                 if(result.getResultCode() == RESULT_OK && result.getData() != null) {
-                    Uri image_uri = result.getData().getData();
+                    image_uri = result.getData().getData();
                     addPhoto.setImageURI(image_uri);
                 }
             });
@@ -182,6 +199,7 @@ public class RegisterActivity extends AppCompatActivity {
     private void registerUser(String email, String password) {
         mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(task -> {
             if(task.isSuccessful()) {
+                uploadData();
                 sendToMain();
             }else {
                 String error = Objects.requireNonNull(task.getException()).getMessage();
@@ -189,6 +207,38 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void uploadData() {
+
+        StorageReference filePath = storageRef.child(System.currentTimeMillis() + ".jpg");
+
+        filePath.putFile(image_uri).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Task<Uri> downloadUri = filePath.getDownloadUrl();
+
+                Map<String, String> user = new HashMap<>();
+                user.put("name", et_name.getText().toString());
+                user.put("lastname", et_lastname.getText().toString());
+                user.put("startyear", et_starty.getText().toString());
+                user.put("endyear", et_endy.getText().toString());
+                user.put("email", et_email.getText().toString());
+                user.put("password", et_password.getText().toString());
+                user.put("imgUrl", downloadUri.toString());
+                user.put("education", "");
+                user.put("country", "");
+                user.put("city", "");
+                user.put("job", "");
+                user.put("tel", "");
+
+                collectionReference.add(user)
+                        .addOnSuccessListener(documentReference ->
+                                Toast.makeText(RegisterActivity.this,"Başarıyla Kaydedildi", Toast.LENGTH_SHORT).show())
+                        .addOnFailureListener(e ->
+                                Toast.makeText(RegisterActivity.this,"Kaydedilemedi", Toast.LENGTH_SHORT).show());
+            }
+        });
+    }
+
 
     private void sendToMain() {
         Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
