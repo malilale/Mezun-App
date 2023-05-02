@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Objects;
 
@@ -52,14 +53,7 @@ public class RegisterActivity extends AppCompatActivity {
                         et_email.setError(getString(R.string.invaild_email));
                         et_email.setFocusable(true);
                     }else {
-                        mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(task -> {
-                            if(task.isSuccessful()) {
-                                sendToMain();
-                            }else {
-                                String error = Objects.requireNonNull(task.getException()).getMessage();
-                                Toast.makeText(RegisterActivity.this,"Hata"+error, Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                        registerUser(email,password);
                     }
                 }else {
                     Toast.makeText(RegisterActivity.this,"Lütfen tüm alanları doldurun", Toast.LENGTH_SHORT).show();
@@ -68,9 +62,30 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
+    private void registerUser(String email, String password) {
+        mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(task -> {
+            if(task.isSuccessful()) {
+                sendToMain();
+            }else {
+                String error = Objects.requireNonNull(task.getException()).getMessage();
+                Toast.makeText(RegisterActivity.this,"Hata"+error, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
     private void sendToMain() {
         Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user!=null)
+            sendToMain();
     }
 }

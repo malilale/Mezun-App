@@ -12,4 +12,5 @@
     <string name="start_year">Okula Giriş Yılı</string>
     <string name="end_year">Mezuniyet Yılı</string>
     <string name="add_photo">Fotoğraf Ekle</string>
+    <string name="wrong_email_pw">E-Posta veya Şifre yanlış</string>
 </resources>
