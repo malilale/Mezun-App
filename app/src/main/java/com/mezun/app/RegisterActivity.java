@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -25,10 +26,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -52,6 +55,7 @@ public class RegisterActivity extends AppCompatActivity {
     private Uri image_uri;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference collectionReference;
+    private DocumentReference documentReference;
     private StorageReference storageRef;
 
     @Override
@@ -69,11 +73,11 @@ public class RegisterActivity extends AppCompatActivity {
         addPhoto = findViewById(R.id.img_addPhoto);
         mAuth = FirebaseAuth.getInstance();
 
+
+
         setCameraIntent();
         setPickFromGalleryIntent();
 
-        storageRef = FirebaseStorage.getInstance().getReference("Profile Images");
-        collectionReference = db.collection("Users");
         addPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -215,6 +219,11 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void uploadData() {
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        storageRef = FirebaseStorage.getInstance().getReference("Profile Images");
+        if(fUser!=null)
+            documentReference = db.collection("Users").document(fUser.getUid());
+
         Map<String, String> user = new HashMap<>();
         user.put("name", et_name.getText().toString());
         user.put("lastname", et_lastname.getText().toString());
@@ -222,29 +231,43 @@ public class RegisterActivity extends AppCompatActivity {
         user.put("endyear", et_endy.getText().toString());
         user.put("email", et_email.getText().toString());
         user.put("password", et_password.getText().toString());
-        user.put("education", "");
+        user.put("education", "Lisans");
         user.put("country", "");
         user.put("city", "");
+        user.put("firm", "");
+        user.put("social", "");
         user.put("job", "");
         user.put("tel", "");
         if(image_uri!=null){
             StorageReference filePath = storageRef.child(System.currentTimeMillis() + ".jpg");
             filePath.putFile(image_uri).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
-                    Task<Uri> downloadUri = filePath.getDownloadUrl();
-                    user.put("imgUrl", downloadUri.toString());
+                    Task<Uri> downloadUri = filePath.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Uri> task) {
+                            user.put("imgUrl", task.getResult().toString());
+                            documentReference.set(user)
+                                    .addOnSuccessListener(unused ->
+                                            Toast.makeText(RegisterActivity.this,"Başarıyla Kaydedildi", Toast.LENGTH_SHORT).show())
+                                    .addOnFailureListener(e ->
+                                            Toast.makeText(RegisterActivity.this,"Kaydedilemedi", Toast.LENGTH_SHORT).show());
+                        }
+                    });
+
+
                 }
             });
         }else{
             user.put("imgUrl", "");
+            documentReference.set(user)
+                    .addOnSuccessListener(unused ->
+                            Toast.makeText(RegisterActivity.this,"Başarıyla Kaydedildi", Toast.LENGTH_SHORT).show())
+                    .addOnFailureListener(e ->
+                            Toast.makeText(RegisterActivity.this,"Kaydedilemedi", Toast.LENGTH_SHORT).show());
         }
+    }
 
-        collectionReference.add(user)
-                .addOnSuccessListener(documentReference ->
-                        Toast.makeText(RegisterActivity.this,"Başarıyla Kaydedildi", Toast.LENGTH_SHORT).show())
-                .addOnFailureListener(e ->
-                        Toast.makeText(RegisterActivity.this,"Kaydedilemedi", Toast.LENGTH_SHORT).show());
-        }
+
 
 
     private void sendToMain() {

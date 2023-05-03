@@ -13,4 +13,10 @@
     <string name="end_year">Mezuniyet Yılı</string>
     <string name="add_photo">Fotoğraf Ekle</string>
     <string name="wrong_email_pw">E-Posta veya Şifre yanlış</string>
+    <string name="profile">Profil</string>
+    <string name="users">Kullanıcılar</string>
+    <string name="announcements">Duyurular</string>
+    <string name="mainpage">Anasayfa</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
