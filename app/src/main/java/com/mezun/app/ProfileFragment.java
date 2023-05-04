@@ -55,6 +55,14 @@ public class ProfileFragment extends Fragment {
         tv_email = view.findViewById(R.id.tv_email);
         img_profile = view.findViewById(R.id.img_profile);
 
+
+
+        return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String currentUserId = user.getUid();
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
@@ -67,14 +75,6 @@ public class ProfileFragment extends Fragment {
                 Toast.makeText(getActivity(), "Failed", Toast.LENGTH_SHORT).show();
             }
         });
-
-        return view;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
     }
 
     @Override

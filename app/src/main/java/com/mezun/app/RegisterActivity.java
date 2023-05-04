@@ -100,10 +100,10 @@ public class RegisterActivity extends AppCompatActivity {
         builder.setItems(options, (dialogInterface, i) -> {
             if(i == 0){
                 //Camera
-                pickFromCamera();
+                askCameraPermissions();
             }else{
                 //Gallery
-                pickFromGallery();
+                askGalleryPermissions();
             }
         });
         builder.create().show();
@@ -130,7 +130,6 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void pickFromCamera() {
-        askCameraPermissions();
         Intent camIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         try{
             CamActivityResultLauncher.launch(camIntent);
@@ -156,7 +155,6 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void pickFromGallery() {
-        askGalleryPermissions();
         Intent pickIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         try{
             galleryActivityResultLauncher.launch(pickIntent);
