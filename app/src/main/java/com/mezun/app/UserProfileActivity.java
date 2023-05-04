@@ -1,7 +1,6 @@
 package com.mezun.app;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -19,6 +18,7 @@ public class UserProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
+        getSupportActionBar().setTitle("Kullanıcı Bilgileri");
         getExtras();
         matchComponents();
         fillComponents();
@@ -37,7 +37,6 @@ public class UserProfileActivity extends AppCompatActivity {
         social = bundle.getString("social","");
         tel = bundle.getString("tel","");
         imgUrl = bundle.getString("imgUrl","");
-        Log.i("00000000",imgUrl);
     }
     private void matchComponents() {
         tv_fullname = findViewById(R.id.tv_userfullname);
@@ -65,7 +64,6 @@ public class UserProfileActivity extends AppCompatActivity {
         tv_social.setText(social);
         tv_tel.setText(tel);
 
-        Log.i("11111111",imgUrl);
         if(!imgUrl.isEmpty()){
             Picasso.get().load(imgUrl).into(img_profile);
         }

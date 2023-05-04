@@ -182,6 +182,9 @@ public class ProfileFragment extends Fragment {
         if(!country.isEmpty() || !city.isEmpty() || !firm.isEmpty())
             tv_jobTitle.setVisibility(View.VISIBLE);
 
+        if(!firm.isEmpty())
+            tv_firm.setVisibility(View.VISIBLE);
+
         if(!country.isEmpty() || !city.isEmpty())
             tv_joblocation.setVisibility(View.VISIBLE);
 

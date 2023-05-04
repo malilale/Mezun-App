@@ -24,7 +24,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         getSupportActionBar().setTitle(R.string.mainpage);
         if(getCallingActivity()!=null)
             getSupportFragmentManager().beginTransaction().replace(R.id.container,profileFragment).commit();
