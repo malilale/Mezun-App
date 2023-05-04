@@ -23,9 +23,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        getSupportActionBar().setTitle(R.string.mainpage);
-        getSupportFragmentManager().beginTransaction().replace(R.id.container,mainPageFragment).commit();
 
+
+        getSupportActionBar().setTitle(R.string.mainpage);
+        if(getCallingActivity()!=null)
+            getSupportFragmentManager().beginTransaction().replace(R.id.container,profileFragment).commit();
+        else
+            getSupportFragmentManager().beginTransaction().replace(R.id.container,mainPageFragment).commit();
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav);
         bottomNavigationView.setOnItemSelectedListener(item -> {

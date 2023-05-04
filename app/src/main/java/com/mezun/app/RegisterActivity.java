@@ -10,9 +10,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.util.Patterns;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -26,11 +24,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -45,7 +40,6 @@ import java.util.UUID;
 public class RegisterActivity extends AppCompatActivity {
 
     private EditText et_name, et_lastname,et_starty, et_endy, et_email, et_password;
-    private Button btn_register;
     private ImageView addPhoto;
     private FirebaseAuth mAuth;
     private ActivityResultLauncher<Intent> CamActivityResultLauncher,galleryActivityResultLauncher;
@@ -54,9 +48,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private Uri image_uri;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private CollectionReference collectionReference;
     private DocumentReference documentReference;
-    private StorageReference storageRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +61,7 @@ public class RegisterActivity extends AppCompatActivity {
         et_endy = findViewById(R.id.et_endy);
         et_email = findViewById(R.id.et_email);
         et_password = findViewById(R.id.et_password);
-        btn_register = findViewById(R.id.btn_register);
+        Button btn_register = findViewById(R.id.btn_register);
         addPhoto = findViewById(R.id.img_addPhoto);
         mAuth = FirebaseAuth.getInstance();
 
@@ -78,33 +70,25 @@ public class RegisterActivity extends AppCompatActivity {
         setCameraIntent();
         setPickFromGalleryIntent();
 
-        addPhoto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showImagePickDialog();
-            }
-        });
-        btn_register.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String name = et_name.getText().toString().trim();
-                String lastname = et_lastname.getText().toString().trim();
-                String starty = et_starty.getText().toString().trim();
-                String endy = et_endy.getText().toString().trim();
-                String email = et_email.getText().toString().trim();
-                String password = et_password.getText().toString().trim();
+        addPhoto.setOnClickListener(view -> showImagePickDialog());
+        btn_register.setOnClickListener(view -> {
+            String name = et_name.getText().toString().trim();
+            String lastname = et_lastname.getText().toString().trim();
+            String starty = et_starty.getText().toString().trim();
+            String endy = et_endy.getText().toString().trim();
+            String email = et_email.getText().toString().trim();
+            String password = et_password.getText().toString().trim();
 
-                if(!name.isEmpty() || !lastname.isEmpty() ||!starty.isEmpty() ||!endy.isEmpty() ||!email.isEmpty() ||!password.isEmpty()) {
-                    if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                        //error message
-                        et_email.setError(getString(R.string.invaild_email));
-                        et_email.setFocusable(true);
-                    }else {
-                        registerUser(email,password);
-                    }
+            if(!name.isEmpty() || !lastname.isEmpty() ||!starty.isEmpty() ||!endy.isEmpty() ||!email.isEmpty() ||!password.isEmpty()) {
+                if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                    //error message
+                    et_email.setError(getString(R.string.invaild_email));
+                    et_email.setFocusable(true);
                 }else {
-                    Toast.makeText(RegisterActivity.this,"Lütfen tüm alanları doldurun", Toast.LENGTH_SHORT).show();
+                    registerUser(email,password);
                 }
+            }else {
+                Toast.makeText(RegisterActivity.this,"Lütfen tüm alanları doldurun", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -137,7 +121,6 @@ public class RegisterActivity extends AppCompatActivity {
             if(result.getResultCode() == RESULT_OK && result.getData() != null) {
                Bundle bundle = result.getData().getExtras();
                 Bitmap bitmap = (Bitmap) bundle.get("data");
-                //addPhoto.setImageBitmap(bitmap);
                 image_uri = getImageUri(bitmap);
                 addPhoto.setImageURI(image_uri);
 
@@ -220,7 +203,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void uploadData() {
         FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-        storageRef = FirebaseStorage.getInstance().getReference("Profile Images");
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference("Profile Images");
         if(fUser!=null)
             documentReference = db.collection("Users").document(fUser.getUid());
 
@@ -242,16 +225,13 @@ public class RegisterActivity extends AppCompatActivity {
             StorageReference filePath = storageRef.child(System.currentTimeMillis() + ".jpg");
             filePath.putFile(image_uri).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
-                    Task<Uri> downloadUri = filePath.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Uri> task) {
-                            user.put("imgUrl", task.getResult().toString());
-                            documentReference.set(user)
-                                    .addOnSuccessListener(unused ->
-                                            Toast.makeText(RegisterActivity.this,"Başarıyla Kaydedildi", Toast.LENGTH_SHORT).show())
-                                    .addOnFailureListener(e ->
-                                            Toast.makeText(RegisterActivity.this,"Kaydedilemedi", Toast.LENGTH_SHORT).show());
-                        }
+                    filePath.getDownloadUrl().addOnCompleteListener(task1 -> {
+                        user.put("imgUrl", task1.getResult().toString());
+                        documentReference.set(user)
+                                .addOnSuccessListener(unused ->
+                                        Toast.makeText(RegisterActivity.this,"Başarıyla Kaydedildi", Toast.LENGTH_SHORT).show())
+                                .addOnFailureListener(e ->
+                                        Toast.makeText(RegisterActivity.this,"Kaydedilemedi", Toast.LENGTH_SHORT).show());
                     });
 
 
