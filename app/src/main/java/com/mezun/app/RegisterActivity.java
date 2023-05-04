@@ -206,12 +206,11 @@ public class RegisterActivity extends AppCompatActivity {
             documentReference = db.collection("Users").document(fUser.getUid());
 
         Map<String, String> user = new HashMap<>();
-        user.put("name", et_name.getText().toString());
-        user.put("lastname", et_lastname.getText().toString());
-        user.put("startyear", et_starty.getText().toString());
-        user.put("endyear", et_endy.getText().toString());
-        user.put("email", et_email.getText().toString());
-        user.put("password", et_password.getText().toString());
+        user.put("name", et_name.getText().toString().trim());
+        user.put("lastname", et_lastname.getText().toString().trim());
+        user.put("startyear", et_starty.getText().toString().trim());
+        user.put("endyear", et_endy.getText().toString().trim());
+        user.put("email", et_email.getText().toString().trim());
         user.put("education", "Lisans");
         user.put("country", "");
         user.put("city", "");
@@ -224,7 +223,7 @@ public class RegisterActivity extends AppCompatActivity {
             filePath.putFile(image_uri).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     filePath.getDownloadUrl().addOnCompleteListener(task1 -> {
-                        user.put("imgUrl", task1.getResult().toString());
+                        user.put("imgUrl", task1.getResult().toString().trim());
                         documentReference.set(user)
                                 .addOnSuccessListener(unused ->
                                         Toast.makeText(RegisterActivity.this,"Başarıyla Kaydedildi", Toast.LENGTH_SHORT).show())
