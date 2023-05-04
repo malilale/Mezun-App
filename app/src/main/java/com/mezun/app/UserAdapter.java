@@ -15,12 +15,14 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyViewHolder> {
+    final SelectListener listener;
     Context context;
     ArrayList<User> list;
 
-    public UserAdapter(Context context, ArrayList<User> list) {
+    public UserAdapter(Context context, ArrayList<User> list, SelectListener listener) {
         this.context = context;
         this.list = list;
+        this.listener = listener;
     }
 
 
@@ -29,7 +31,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyViewHolder> 
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.user_item,parent,false);
-        return new MyViewHolder(view);
+        return new MyViewHolder(view,listener);
     }
 
     @Override
@@ -52,7 +54,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyViewHolder> 
         private TextView tv_fullname, tv_job, tv_years, tv_location;
         private ImageView img_profile;
 
-        public MyViewHolder(@NonNull View itemView) {
+        public MyViewHolder(@NonNull View itemView, SelectListener listener) {
             super(itemView);
 
             tv_fullname = itemView.findViewById(R.id.card_fullname);
@@ -61,6 +63,14 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyViewHolder> 
             tv_location = itemView.findViewById(R.id.card_location);
             img_profile = itemView.findViewById(R.id.img_card_profile);
 
+            itemView.setOnClickListener(view -> {
+                if (listener != null){
+                    int posisiton = getAdapterPosition();
+                    if(posisiton != RecyclerView.NO_POSITION)
+                        listener.onItemClicked(posisiton);
+
+                }
+            });
         }
     }
 }

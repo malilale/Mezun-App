@@ -1,5 +1,6 @@
 package com.mezun.app;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +16,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 
-public class UsersFragment extends Fragment {
+public class UsersFragment extends Fragment implements SelectListener{
 
     RecyclerView recyclerView;
     UserAdapter userAdapter;
@@ -35,7 +36,7 @@ public class UsersFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         list = new ArrayList<>();
-        userAdapter = new UserAdapter(getActivity(),list);
+        userAdapter = new UserAdapter(getActivity(),list,this);
         recyclerView.setAdapter(userAdapter);
 
         getData();
@@ -52,5 +53,27 @@ public class UsersFragment extends Fragment {
             }
             userAdapter.notifyDataSetChanged();
         });
+    }
+
+    @Override
+    public void onItemClicked(int position) {
+        User currentUser = list.get(position);
+        sendToUserProfile(currentUser);
+    }
+
+    private void sendToUserProfile(User user) {
+        Intent intent = new Intent(getActivity(),UserProfileActivity.class);
+        intent.putExtra("fullname", user.getName()+" "+user.getLastname());
+        intent.putExtra("lastname", user.getLastname());
+        intent.putExtra("years", user.getYears());
+        intent.putExtra("education", user.getEducation());
+        intent.putExtra("location", user.getLocation());
+        intent.putExtra("firm", user.getFirm());
+        intent.putExtra("job", user.getJob());
+        intent.putExtra("social", user.getSocial());
+        intent.putExtra("tel", user.getTel());
+        intent.putExtra("imgUrl", user.getImgUrl());
+        intent.putExtra("email", user.getEmail());
+        startActivity(intent);
     }
 }
