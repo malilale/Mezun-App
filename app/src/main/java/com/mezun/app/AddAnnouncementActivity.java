@@ -20,7 +20,7 @@ import java.util.Map;
 
 public class AddAnnouncementActivity extends AppCompatActivity {
     private EditText et_post;
-    String post;
+    String post, name, lastname, email, imgUrl, currentUid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,19 +31,40 @@ public class AddAnnouncementActivity extends AppCompatActivity {
         et_post = findViewById(R.id.et_post);
         Button btn_sendpost = findViewById(R.id.btn_sendpost);
 
+        getCurrentUser();
+
         btn_sendpost.setOnClickListener(view -> {
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            String currentUid = user.getUid();
             post = et_post.getText().toString().trim();
-            loadData(post,currentUid);
+            loadData();
         });
     }
 
-    private void loadData(String post, String currentUid) {
+    private void getCurrentUser() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        currentUid = user.getUid();
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        DocumentReference documentReference = firestore.collection("Users").document(currentUid);
+
+        documentReference.get().addOnCompleteListener(task -> {
+            if(task.getResult().exists()){
+                name = task.getResult().getString("name");
+                lastname = task.getResult().getString("lastname");
+                email = task.getResult().getString("email");
+                imgUrl = task.getResult().getString("imgUrl");
+            }else{
+                Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void loadData() {
         DocumentReference reference;
         Map<String, String> postMap = new HashMap<>();
         postMap.put("post",post);
         postMap.put("uid",currentUid);
+        postMap.put("fullname",name+" "+lastname);
+        postMap.put("email",email);
+        postMap.put("imgUrl",imgUrl);
 
         reference = FirebaseFirestore.getInstance().collection("Posts").document("post-"+ System.currentTimeMillis());
         reference.set(postMap).addOnSuccessListener(new OnSuccessListener<Void>() {

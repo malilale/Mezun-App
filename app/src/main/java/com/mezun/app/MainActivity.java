@@ -10,13 +10,15 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
 
     MainPageFragment mainPageFragment = new MainPageFragment();
     UsersFragment usersFragment = new UsersFragment();
     AnnouncementsFragment announcementsFragment = new AnnouncementsFragment();
     ProfileFragment profileFragment = new ProfileFragment();
-
+    ArrayList<User> list;
     FirebaseUser user;
 
     @Override
