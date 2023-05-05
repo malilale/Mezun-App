@@ -218,6 +218,7 @@ public class RegisterActivity extends AppCompatActivity {
         user.put("social", "");
         user.put("job", "");
         user.put("tel", "");
+        user.put("uid",fUser.getUid());
         if(image_uri!=null){
             StorageReference filePath = storageRef.child(System.currentTimeMillis() + ".jpg");
             filePath.putFile(image_uri).addOnCompleteListener(task -> {

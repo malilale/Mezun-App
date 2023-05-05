@@ -172,6 +172,9 @@ public class EditProfileActivity extends AppCompatActivity {
 
 
     private void loadDatasToDb() {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        StorageReference storageRef;
+
         Map<String, String> user = new HashMap<>();
         user.put("name", new_name);
         user.put("lastname", new_lastname);
@@ -186,8 +189,8 @@ public class EditProfileActivity extends AppCompatActivity {
         user.put("tel", new_tel);
         user.put("email", new_email);
         user.put("imgUrl","");
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        StorageReference storageRef;
+        user.put("uid", currentUser.getUid());
+
         if(isPfpChanged){
             storageRef = FirebaseStorage.getInstance().getReference("Profile Images");
             StorageReference filePath = storageRef.child(System.currentTimeMillis() + ".jpg");

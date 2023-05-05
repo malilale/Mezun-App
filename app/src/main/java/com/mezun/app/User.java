@@ -1,9 +1,21 @@
 package com.mezun.app;
 
 public class User {
-    private String name,lastname,startyear,endyear,email,education,country,city,firm,job,social,tel,imgUrl;
+    private String name;
+    private String lastname;
+    private String startyear;
+    private String endyear;
+    private String email;
+    private String education;
+    private String country;
+    private String city;
+    private String firm;
+    private String job;
+    private String social;
+    private String tel;
+    private String imgUrl;
 
-    public User(String name, String lastname, String startyear, String endyear, String email, String education, String country, String city, String firm, String job, String social, String tel, String imgUrl) {
+    public User(String name, String lastname, String startyear, String endyear, String email, String education, String country, String city, String firm, String job, String social, String tel, String imgUrl, String uid) {
         this.name = name;
         this.lastname = lastname;
         this.startyear = startyear;
@@ -17,9 +29,21 @@ public class User {
         this.social = social;
         this.tel = tel;
         this.imgUrl = imgUrl;
+        this.uid = uid;
     }
 
+    private String uid;
+
+
     public User(){}
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
 
     public String getName() {
         return name;

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp"
+    tools:context=".AddAnnouncementActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:textColor="@color/purple_700"
+        android:gravity="center_horizontal"
+        android:textStyle="bold"
+        android:textSize="30sp"
+        android:text="Yeni Duyuru Ekle"/>
+
+
+   <EditText
+       android:id="@+id/et_post"
+       android:padding="15dp"
+       android:layout_width="match_parent"
+       android:layout_height="150dp"
+       android:layout_marginTop="25dp"
+       android:background="@drawable/edit_text_shape"
+       android:hint="Duyuru..."/>
+
+    <Button
+        android:id="@+id/btn_sendpost"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="Gönder"
+        android:layout_marginTop="40dp"
+        android:textColor="@color/white"/>
+
+</LinearLayout>
