@@ -123,7 +123,8 @@ public class EditProfileActivity extends AppCompatActivity {
     private void askCameraPermissions() {
         if(ContextCompat.checkSelfPermission(this,android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(this, new String[] {android.Manifest.permission.CAMERA}, CAMERA_PERM_CODE);
-        }
+        }else
+            pickFromCamera();
     }
 
     private void setPickFromGalleryIntent(){
@@ -149,7 +150,8 @@ public class EditProfileActivity extends AppCompatActivity {
     private void askGalleryPermissions() {
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(this, new String[] {android.Manifest.permission.READ_EXTERNAL_STORAGE}, GALLERY_PERM_CODE);
-        }
+        }else
+            pickFromGallery();
     }
 
     @Override
@@ -295,7 +297,7 @@ public class EditProfileActivity extends AppCompatActivity {
         et_job.setText(job);
         et_social.setText(social);
         et_tel.setText(tel);
-
-        Picasso.get().load(imgUrl).into(img_profile);
+        if(!imgUrl.isEmpty())
+            Picasso.get().load(imgUrl).into(img_profile);
     }
 }
