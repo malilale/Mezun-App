@@ -59,14 +59,15 @@ public class AddAnnouncementActivity extends AppCompatActivity {
 
     private void loadData() {
         DocumentReference reference;
+        String postId = "post-"+ System.currentTimeMillis();
         Map<String, String> postMap = new HashMap<>();
         postMap.put("post",post);
         postMap.put("uid",currentUid);
         postMap.put("fullname",name+" "+lastname);
         postMap.put("email",email);
         postMap.put("imgUrl",imgUrl);
-
-        reference = FirebaseFirestore.getInstance().collection("Posts").document("post-"+ System.currentTimeMillis());
+        postMap.put("postId", postId);
+        reference = FirebaseFirestore.getInstance().collection("Posts").document(postId);
         reference.set(postMap).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
