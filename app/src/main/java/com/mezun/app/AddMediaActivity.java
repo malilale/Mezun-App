@@ -88,18 +88,22 @@ public class AddMediaActivity extends AppCompatActivity {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         StorageReference mediaStorageRef, thumbStorageRef;
         DocumentReference documentReference = FirebaseFirestore.getInstance().collection("Media").document("media-"+System.currentTimeMillis());
-
         Map<String, String> media = new HashMap<>();
         media.put("title", title);
         media.put("uid", currentUser.getUid());
         media.put("type",type);
 
-        String fileName=System.currentTimeMillis()+"";
+
+
+        String fileName=""+System.currentTimeMillis();
+        media.put("mediaId","media-"+fileName);
         String thumbName=fileName+".png";
         if(type.contains("image"))
             fileName=fileName+".jpg";
         else if(type.contains("video"))
             fileName=fileName+".mp4";
+
+
         mediaStorageRef = FirebaseStorage.getInstance().getReference("Media");
         thumbStorageRef = FirebaseStorage.getInstance().getReference("Thumbnails");
 

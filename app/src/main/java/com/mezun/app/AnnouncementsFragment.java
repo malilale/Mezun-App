@@ -64,7 +64,6 @@ public class AnnouncementsFragment extends Fragment implements SelectListener{
     }
 
     private void getData() {
-
        reference.get().addOnSuccessListener(queryDocumentSnapshots -> {
             for(DocumentSnapshot d : queryDocumentSnapshots.getDocuments()){
                 list.add(d.toObject(Announcement.class));
@@ -80,7 +79,6 @@ public class AnnouncementsFragment extends Fragment implements SelectListener{
         Announcement announcement = list.get(position);
         if(announcement.getUid().matches(currentUid))
             showDeleteDialog(announcement);
-
     }
 
     private void showDeleteDialog(Announcement announcement) {

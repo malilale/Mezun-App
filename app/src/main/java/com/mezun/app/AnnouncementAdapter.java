@@ -16,8 +16,8 @@ import java.util.ArrayList;
 
 public class AnnouncementAdapter extends RecyclerView.Adapter<AnnouncementAdapter.MyViewHolder>{
     final SelectListener listener;
-    Context context;
-    ArrayList<Announcement> list;
+    private Context context;
+    private ArrayList<Announcement> list;
 
     public AnnouncementAdapter(SelectListener listener, Context context, ArrayList<Announcement> list) {
         this.listener = listener;
@@ -59,12 +59,12 @@ public class AnnouncementAdapter extends RecyclerView.Adapter<AnnouncementAdapte
             tv_post = itemView.findViewById(R.id.anoun);
             img_profile = itemView.findViewById(R.id.img_anoun_profile);
 
+
             itemView.setOnClickListener(view -> {
                 if (listener != null){
                     int posisiton = getAdapterPosition();
                     if(posisiton != RecyclerView.NO_POSITION)
                         listener.onItemClicked(posisiton);
-
                 }
             });
         }
