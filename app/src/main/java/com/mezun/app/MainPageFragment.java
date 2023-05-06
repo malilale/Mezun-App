@@ -22,6 +22,8 @@ public class MainPageFragment extends Fragment implements View.OnClickListener {
         View view = inflater.inflate(R.layout.fragment_main_page, container, false);
         FloatingActionButton btn_addmedia = view.findViewById(R.id.btn_addMedia);
 
+
+
         btn_addmedia.setOnClickListener(view1 -> {
             Intent intent = new Intent(getActivity(),AddMediaActivity.class);
             startActivity(intent);

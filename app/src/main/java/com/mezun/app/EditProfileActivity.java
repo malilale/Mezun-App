@@ -7,7 +7,9 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -30,6 +32,9 @@ import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -91,11 +96,16 @@ public class EditProfileActivity extends AppCompatActivity {
         builder.create().show();
     }
 
-    public Uri getImageUri( Bitmap inImage) {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(EditProfileActivity.this.getContentResolver(), inImage, UUID.randomUUID().toString() + ".png", "drawing");
-        return Uri.parse(path);
+    public Uri getImageUri( Bitmap inImage) throws IOException {
+        File tempFile = new File(getCacheDir(), "temp.png");
+        try {
+            FileOutputStream fos = new FileOutputStream(tempFile);
+            inImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.close();
+        } catch (IOException e) {
+// Handle error
+        }
+        return Uri.fromFile(tempFile);
     }
 
     private void setCameraIntent() {
@@ -103,7 +113,11 @@ public class EditProfileActivity extends AppCompatActivity {
             if(result.getResultCode() == RESULT_OK && result.getData() != null) {
                 Bundle bundle = result.getData().getExtras();
                 Bitmap bitmap = (Bitmap) bundle.get("data");
-                image_uri = getImageUri(bitmap);
+                try {
+                    image_uri = getImageUri(bitmap);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
                 img_profile.setImageURI(image_uri);
                 isPfpChanged = true;
             }
