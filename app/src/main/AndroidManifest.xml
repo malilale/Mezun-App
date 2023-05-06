@@ -17,6 +17,9 @@
         android:theme="@style/Theme.MezunApp"
         tools:targetApi="31">
         <activity
+            android:name=".PlayMediaActivity"
+            android:exported="false" />
+        <activity
             android:name=".AddMediaActivity"
             android:exported="false" />
         <activity

@@ -8,15 +8,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -104,18 +100,11 @@ public class MainPageFragment extends Fragment implements SelectListener {
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
         DocumentReference documentReference = firestore.collection("Media").document(media.getMediaId());
         Log.i("!!!!",media.mediaId);
-        documentReference.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void unused) {
-                list.remove(media);
-                mediaAdapter.notifyDataSetChanged();
-                Toast.makeText(getActivity(), "Başarıyla Silindi", Toast.LENGTH_SHORT).show();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getActivity(), "Silme İşlemi Başarısız!", Toast.LENGTH_SHORT).show();
-            }
-        });
+        documentReference.delete().addOnSuccessListener(unused -> {
+            list.remove(media);
+            mediaAdapter.notifyDataSetChanged();
+            Toast.makeText(getActivity(), "Başarıyla Silindi", Toast.LENGTH_SHORT).show();
+        }).addOnFailureListener(e ->
+                Toast.makeText(getActivity(), "Silme İşlemi Başarısız!", Toast.LENGTH_SHORT).show());
     }
 }

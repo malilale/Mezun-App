@@ -1,6 +1,7 @@
 package com.mezun.app;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,13 +9,11 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -75,21 +74,16 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.MyViewHolder
                     holder.play_button.setVisibility(View.GONE);
             }
         });
-        /*
+
         holder.img_media.setOnClickListener(view -> {
+            Log.d("44444","imgmedia");
             String mediaUrl = media.getMediaUrl();
-            Intent
-        });*/
-
-      /*  btn_delete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-               Log.d("!!!!!!!!",media.getTitle());
-            }
-        });*/
-
-
-
+            String type = media.getType();
+            Intent intent = new Intent(context,PlayMediaActivity.class);
+            intent.putExtra("mediaUrl",mediaUrl);
+            intent.putExtra("type",type);
+            context.startActivity(intent);
+        });
     }
 
     @Override
@@ -111,7 +105,7 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.MyViewHolder
             img_media = itemView.findViewById(R.id.img_media);
             play_button = itemView.findViewById(R.id.play_button);
             btn_delete = itemView.findViewById(R.id.btn_delete);
-            
+
 
             btn_delete.setOnClickListener(view -> {
                 if (listener != null){
@@ -120,19 +114,6 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.MyViewHolder
                         listener.onItemClicked(posisiton);
                 }
             });
-
-            /*
-
-            itemView.setOnClickListener(view -> {
-                if (listener != null){
-                    int posisiton = getAdapterPosition();
-                    if(posisiton != RecyclerView.NO_POSITION)
-                        listener.onItemClicked(posisiton);
-
-                }
-            });*/
-
-
         }
     }
 
