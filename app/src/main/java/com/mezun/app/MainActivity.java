@@ -10,15 +10,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.util.ArrayList;
-
 public class MainActivity extends AppCompatActivity {
-
     MainPageFragment mainPageFragment = new MainPageFragment();
     UsersFragment usersFragment = new UsersFragment();
     AnnouncementsFragment announcementsFragment = new AnnouncementsFragment();
     ProfileFragment profileFragment = new ProfileFragment();
-    ArrayList<User> list;
     FirebaseUser user;
 
     @Override
@@ -27,12 +23,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         getSupportActionBar().setTitle(R.string.mainpage);
-        if(getCallingActivity()!=null)
-            getSupportFragmentManager().beginTransaction().replace(R.id.container,profileFragment).commit();
-        else
-            getSupportFragmentManager().beginTransaction().replace(R.id.container,mainPageFragment).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.container,mainPageFragment).commit();
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav);
+        //set Fragments by bottom navigation bar
         bottomNavigationView.setOnItemSelectedListener(item -> {
             Fragment selected=null;
             switch (item.getItemId()){
@@ -59,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
             }else
                 return false;
         });
-
     }
 
     @Override

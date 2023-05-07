@@ -66,7 +66,7 @@ public class AddMediaActivity extends AppCompatActivity {
         btn_sendmedia = findViewById(R.id.btn_sendmedia);
 
         progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("İçerik Gönderiliyor...");
+        progressDialog.setMessage(getString(R.string.sendind_media));
 
         img_media.setOnClickListener(view -> askGalleryPermissions());
 
@@ -75,7 +75,7 @@ public class AddMediaActivity extends AppCompatActivity {
         btn_sendmedia.setOnClickListener(view -> {
             title = et_title.getText().toString().trim();
             if(selectedUri == null)
-                Toast.makeText(AddMediaActivity.this,"Lütfen bir fotoğraf veya video seçin",Toast.LENGTH_SHORT).show();
+                Toast.makeText(AddMediaActivity.this, R.string.please_pick_media,Toast.LENGTH_SHORT).show();
             else{
                 loadData();
             }
@@ -122,11 +122,11 @@ public class AddMediaActivity extends AppCompatActivity {
                                         media.put("thumbUrl", task21.getResult().toString());
                                         documentReference.set(media)
                                             .addOnSuccessListener(unused ->{
-                                                Toast.makeText(AddMediaActivity.this,"Başarıyla Kaydedildi", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(AddMediaActivity.this,R.string.send_success, Toast.LENGTH_SHORT).show();
                                                 progressDialog.dismiss();
                                                 finish();})
                                             .addOnFailureListener(e ->{
-                                                Toast.makeText(AddMediaActivity.this,"Kaydedilemedi", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(AddMediaActivity.this,R.string.send_unsuccess, Toast.LENGTH_SHORT).show();
                                                 progressDialog.dismiss();});
                                     }else
                                         Toast.makeText(AddMediaActivity.this,"FAILED!",Toast.LENGTH_SHORT).show();
@@ -203,7 +203,7 @@ public class AddMediaActivity extends AppCompatActivity {
         try{
             activityResultLauncher.launch(pickIntent);
         }catch (ActivityNotFoundException e){
-            Toast.makeText(AddMediaActivity.this,"Uygulama yok!",Toast.LENGTH_SHORT).show();
+            Toast.makeText(AddMediaActivity.this,R.string.no_apps,Toast.LENGTH_SHORT).show();
         }
     }
 

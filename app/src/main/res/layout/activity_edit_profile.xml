@@ -59,12 +59,6 @@
         </LinearLayout>
     </LinearLayout>
 
-
-
-
-
-
-
    <LinearLayout
        android:layout_width="match_parent"
        android:layout_height="wrap_content"
@@ -91,7 +85,7 @@
         android:id="@+id/et_edit_education"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Eğitim Durumu"
+        android:hint="@string/education"
         android:inputType="text" />
     <LinearLayout
         android:layout_width="match_parent"
@@ -101,7 +95,7 @@
             android:id="@+id/et_edit_country"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="Ülke"
+            android:hint="@string/country"
             android:layout_weight="1"
             android:inputType="text"/>
 
@@ -109,7 +103,7 @@
             android:id="@+id/et_edit_city"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="Şehir"
+            android:hint="@string/city"
             android:layout_weight="1"
             android:inputType="text" />
     </LinearLayout>
@@ -118,26 +112,26 @@
         android:id="@+id/et_edit_firm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Firma"
+        android:hint="@string/firm"
         android:inputType="text" />
     <EditText
         android:id="@+id/et_edit_job"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Meslek"
+        android:hint="@string/job"
         android:inputType="text" />
 
     <EditText
         android:id="@+id/et_edit_social"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Sosyal Medya" />
+        android:hint="@string/social_media" />
 
     <EditText
         android:id="@+id/et_edit_tel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Telefon"
+        android:hint="@string/tel"
         android:inputType="number" />
 
     <EditText
@@ -146,19 +140,12 @@
         android:layout_height="wrap_content"
         android:hint="@string/email"
         android:inputType="textEmailAddress" />
-
-
-
-
     <Button
         android:id="@+id/btn_save"
-        android:text="Kaydet"
+        android:text="@string/save"
         android:textColor="@color/white"
         android:layout_gravity="center"
         android:layout_marginTop="30dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
-
-
-
 </LinearLayout>

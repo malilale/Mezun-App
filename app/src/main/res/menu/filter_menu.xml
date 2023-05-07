@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/act_country"
-        android:title="Ülke"/>
+        android:title="@string/country"/>
     <item android:id="@+id/act_city"
-        android:title="Şehir"/>
+        android:title="@string/city"/>
     <item android:id="@+id/act_startyear"
-        android:title="Giriş Yılı"/>
+        android:title="@string/startyear"/>
     <item android:id="@+id/act_endyear"
-        android:title="Mezun Yılı"/>
+        android:title="@string/endyear"/>
 </menu>

@@ -1,7 +1,6 @@
 package com.mezun.app;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.LayoutInflater;
@@ -17,7 +16,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
@@ -26,9 +24,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.squareup.picasso.Picasso;
 
 
@@ -108,7 +104,7 @@ public class ProfileFragment extends Fragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LinearLayout layout = new LinearLayout(getActivity());
         final EditText et_password = new EditText(getActivity());
-        et_password.setHint("Yeni Şifre");
+        et_password.setHint(R.string.new_password);
         et_password.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
 
         layout.addView(et_password);
@@ -116,11 +112,11 @@ public class ProfileFragment extends Fragment {
 
         builder.setView(layout);
 
-        builder.setPositiveButton("Değiştir", (dialogInterface, i) -> {
+        builder.setPositiveButton(R.string.Change, (dialogInterface, i) -> {
             String password = et_password.getText().toString().trim();
             updatePassword(password);
         });
-        builder.setNegativeButton("İptal", (dialogInterface, i) -> dialogInterface.dismiss());
+        builder.setNegativeButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.dismiss());
         builder.create().show();
     }
 
@@ -128,7 +124,7 @@ public class ProfileFragment extends Fragment {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         user.updatePassword(password).addOnCompleteListener(task -> {
             if(task.isSuccessful())
-                Toast.makeText(getActivity(), "Şifre Başarıyla Değiştirildi", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), R.string.recover_pw_success, Toast.LENGTH_SHORT).show();
             else
                 Toast.makeText(getActivity(), "Failed", Toast.LENGTH_SHORT).show();
         });

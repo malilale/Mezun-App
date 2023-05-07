@@ -2,6 +2,7 @@ package com.mezun.app;
 
 import static androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult;
 
+
 import android.Manifest;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -40,7 +41,7 @@ import java.util.UUID;
 public class RegisterActivity extends AppCompatActivity {
 
     private EditText et_name, et_lastname,et_starty, et_endy, et_email, et_password;
-    private ImageView addPhoto;
+    private ImageView img_addPhoto;
     private FirebaseAuth mAuth;
     private ActivityResultLauncher<Intent> CamActivityResultLauncher,galleryActivityResultLauncher;
     public static final int CAMERA_PERM_CODE = 101;
@@ -54,6 +55,7 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        getSupportActionBar().setTitle(R.string.register);
 
         et_name = findViewById(R.id.et_name);
         et_lastname = findViewById(R.id.et_lastname);
@@ -62,16 +64,16 @@ public class RegisterActivity extends AppCompatActivity {
         et_email = findViewById(R.id.et_email);
         et_password = findViewById(R.id.et_password);
         Button btn_register = findViewById(R.id.btn_register);
-        addPhoto = findViewById(R.id.img_addPhoto);
+        img_addPhoto = findViewById(R.id.img_addPhoto);
         mAuth = FirebaseAuth.getInstance();
-
-
 
         setCameraIntent();
         setPickFromGalleryIntent();
 
-        addPhoto.setOnClickListener(view -> showImagePickDialog());
-        btn_register.setOnClickListener(view -> {
+        img_addPhoto.setOnClickListener(view -> //add pfp from camera or gallery
+                showImagePickDialog());
+
+        btn_register.setOnClickListener(view -> { //register user
             String name = et_name.getText().toString().trim();
             String lastname = et_lastname.getText().toString().trim();
             String starty = et_starty.getText().toString().trim();
@@ -88,15 +90,15 @@ public class RegisterActivity extends AppCompatActivity {
                     registerUser(email,password);
                 }
             }else {
-                Toast.makeText(RegisterActivity.this,"Lütfen tüm alanları doldurun", Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterActivity.this, R.string.please_fill, Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void showImagePickDialog() {
-        String options[] = {"Kamera","Galeri"};
+        String options[] = {getString(R.string.camera),getString(R.string.gallery)};
         AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this);
-        builder.setTitle("Profil Fotoğrafı");
+        builder.setTitle(R.string.profile_picture);
         builder.setItems(options, (dialogInterface, i) -> {
             if(i == 0){
                 //Camera
@@ -109,7 +111,7 @@ public class RegisterActivity extends AppCompatActivity {
         builder.create().show();
     }
 
-    public Uri getImageUri( Bitmap inImage) {
+    public Uri getImageUri( Bitmap inImage) { //get uri from bitmap by temporary file
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
         String path = MediaStore.Images.Media.insertImage(RegisterActivity.this.getContentResolver(), inImage, UUID.randomUUID().toString() + ".png", "drawing");
@@ -122,11 +124,9 @@ public class RegisterActivity extends AppCompatActivity {
                Bundle bundle = result.getData().getExtras();
                 Bitmap bitmap = (Bitmap) bundle.get("data");
                 image_uri = getImageUri(bitmap);
-                addPhoto.setImageURI(image_uri);
-
+                img_addPhoto.setImageURI(image_uri);
             }
         });
-
     }
 
     private void pickFromCamera() {
@@ -134,14 +134,16 @@ public class RegisterActivity extends AppCompatActivity {
         try{
             CamActivityResultLauncher.launch(camIntent);
         }catch (ActivityNotFoundException e){
-            Toast.makeText(RegisterActivity.this,"Uygulama yok!",Toast.LENGTH_SHORT).show();
+            Toast.makeText(RegisterActivity.this, R.string.no_apps,Toast.LENGTH_SHORT).show();
         }
     }
 
     private void askCameraPermissions() {
         if(ContextCompat.checkSelfPermission(this,android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(this, new String[] {android.Manifest.permission.CAMERA}, CAMERA_PERM_CODE);
-        }
+        }else
+            //Permission granted
+            pickFromCamera();
     }
 
     private void setPickFromGalleryIntent(){
@@ -149,7 +151,7 @@ public class RegisterActivity extends AppCompatActivity {
             new ActivityResultContracts.StartActivityForResult(), result -> {
                 if(result.getResultCode() == RESULT_OK && result.getData() != null) {
                     image_uri = result.getData().getData();
-                    addPhoto.setImageURI(image_uri);
+                    img_addPhoto.setImageURI(image_uri);
                 }
             });
     }
@@ -159,14 +161,16 @@ public class RegisterActivity extends AppCompatActivity {
         try{
             galleryActivityResultLauncher.launch(pickIntent);
         }catch (ActivityNotFoundException e){
-            Toast.makeText(RegisterActivity.this,"Uygulama yok!",Toast.LENGTH_SHORT).show();
+            Toast.makeText(RegisterActivity.this,R.string.no_apps,Toast.LENGTH_SHORT).show();
         }
     }
 
     private void askGalleryPermissions() {
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(this, new String[] {android.Manifest.permission.READ_EXTERNAL_STORAGE}, GALLERY_PERM_CODE);
-        }
+        }else
+            //Permission granted
+            pickFromGallery();
     }
 
     @Override
@@ -182,7 +186,7 @@ public class RegisterActivity extends AppCompatActivity {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 pickFromGallery();
             } else {
-                Toast.makeText(this, "Camera Permission is Required to Use camera.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Read External Storage Permission is Required to Use gallery.", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -194,16 +198,17 @@ public class RegisterActivity extends AppCompatActivity {
                 sendToMain();
             }else {
                 String error = Objects.requireNonNull(task.getException()).getMessage();
-                Toast.makeText(RegisterActivity.this,"Hata"+error, Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterActivity.this, R.string.register_unsuccess, Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void uploadData() {
-        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         StorageReference storageRef = FirebaseStorage.getInstance().getReference("Profile Images");
-        if(fUser!=null)
-            documentReference = db.collection("Users").document(fUser.getUid());
+        //create document
+        if(currentUser!=null)
+            documentReference = db.collection("Users").document(currentUser.getUid());
 
         Map<String, String> user = new HashMap<>();
         user.put("name", et_name.getText().toString().trim());
@@ -218,7 +223,7 @@ public class RegisterActivity extends AppCompatActivity {
         user.put("social", "");
         user.put("job", "");
         user.put("tel", "");
-        user.put("uid",fUser.getUid());
+        user.put("uid",currentUser.getUid());
         if(image_uri!=null){
             StorageReference filePath = storageRef.child(System.currentTimeMillis() + ".jpg");
             filePath.putFile(image_uri).addOnCompleteListener(task -> {
@@ -226,27 +231,22 @@ public class RegisterActivity extends AppCompatActivity {
                     filePath.getDownloadUrl().addOnCompleteListener(task1 -> {
                         user.put("imgUrl", task1.getResult().toString().trim());
                         documentReference.set(user)
-                                .addOnSuccessListener(unused ->
-                                        Toast.makeText(RegisterActivity.this,"Başarıyla Kaydedildi", Toast.LENGTH_SHORT).show())
-                                .addOnFailureListener(e ->
-                                        Toast.makeText(RegisterActivity.this,"Kaydedilemedi", Toast.LENGTH_SHORT).show());
+                            .addOnSuccessListener(unused ->
+                                    Toast.makeText(RegisterActivity.this, R.string.save_success, Toast.LENGTH_SHORT).show())
+                            .addOnFailureListener(e ->
+                                    Toast.makeText(RegisterActivity.this, R.string.register_unsuccess, Toast.LENGTH_SHORT).show());
                     });
-
-
                 }
             });
-        }else{
+        }else{ //if image did not uploaded
             user.put("imgUrl", "");
             documentReference.set(user)
-                    .addOnSuccessListener(unused ->
-                            Toast.makeText(RegisterActivity.this,"Başarıyla Kaydedildi", Toast.LENGTH_SHORT).show())
-                    .addOnFailureListener(e ->
-                            Toast.makeText(RegisterActivity.this,"Kaydedilemedi", Toast.LENGTH_SHORT).show());
+                .addOnSuccessListener(unused ->
+                    Toast.makeText(RegisterActivity.this,R.string.save_success, Toast.LENGTH_SHORT).show())
+                .addOnFailureListener(e ->
+                    Toast.makeText(RegisterActivity.this,R.string.register_unsuccess, Toast.LENGTH_SHORT).show());
         }
     }
-
-
-
 
     private void sendToMain() {
         Intent intent = new Intent(RegisterActivity.this, MainActivity.class);

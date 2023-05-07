@@ -20,7 +20,7 @@ public class UserProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
-        getSupportActionBar().setTitle("Kullanıcı Bilgileri");
+        getSupportActionBar().setTitle(R.string.user_info);
         getExtras();
         matchComponents();
         fillComponents();

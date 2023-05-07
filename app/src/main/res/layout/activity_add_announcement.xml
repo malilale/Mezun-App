@@ -16,7 +16,7 @@
         android:gravity="center_horizontal"
         android:textStyle="bold"
         android:textSize="30sp"
-        android:text="Yeni Duyuru Ekle"/>
+        android:text="@string/add_new_post"/>
 
 
    <EditText
@@ -26,15 +26,15 @@
        android:layout_height="150dp"
        android:layout_marginTop="25dp"
        android:background="@drawable/edit_text_shape"
-       android:hint="Duyuru..."/>
+       android:hint="@string/post_"/>
 
     <TextView
         android:layout_marginTop="30dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:textSize="18dp"
-        android:text="Duyuru son tarihini seçin:"/>
+        android:textSize="18sp"
+        android:text="@string/pick_date"/>
 
     <Button
         android:id="@+id/datePickerButton"
@@ -42,7 +42,6 @@
         android:layout_width="275dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:text="23 Ağustos 2023"
         android:textSize="30sp"
         android:textColor="@color/black"
         style="?android:spinnerStyle"
@@ -57,7 +56,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:text="Gönder"
+        android:text="@string/send"
         android:layout_marginTop="10dp"
         android:textColor="@color/white"/>
 

@@ -2,7 +2,6 @@ package com.mezun.app;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +27,6 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.MyViewHolder
     Context context;
     ArrayList<Media> list;
     String name,lastname,imgUrl;
-  //  private ImageButton btn_delete;
 
     public MediaAdapter(SelectListener listener, Context context, ArrayList<Media> list) {
         this.listener = listener;
@@ -69,7 +67,6 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.MyViewHolder
         });
 
         holder.img_media.setOnClickListener(view -> {
-            Log.d("44444","imgmedia");
             String mediaUrl = media.getMediaUrl();
             String type = media.getType();
             Intent intent = new Intent(context,PlayMediaActivity.class);

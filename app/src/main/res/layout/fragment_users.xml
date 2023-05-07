@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".UsersFragment">
 
     <LinearLayout
@@ -17,7 +16,7 @@
             android:layout_width="120dp"
             android:layout_height="50dp"
             android:background="@drawable/edit_text_shape"
-            android:text="Filtre seç"
+            android:text="@string/pick_filter"
             android:layout_weight="2"
             android:textColor="@color/purple_700"
             android:layout_marginHorizontal="5dp"/>
@@ -34,7 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="60dp"
             android:layout_marginEnd="10dp"
-            android:text="Filtrele"/>
+            android:text="@string/filter"/>
 
     </LinearLayout>
     <View

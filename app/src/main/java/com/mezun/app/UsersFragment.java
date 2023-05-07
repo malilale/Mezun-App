@@ -12,19 +12,14 @@ import android.widget.EditText;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
@@ -75,7 +70,7 @@ public class UsersFragment extends Fragment implements SelectListener{
     private void setFilters() {
         filter = et_filter.getText().toString().trim();
         if(filter.isEmpty() || option.isEmpty()){
-            Toast.makeText(getActivity(), "Bir filtre seçiniz", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.pickfilter, Toast.LENGTH_SHORT).show();
             return;
         }
         list.clear();
@@ -86,9 +81,7 @@ public class UsersFragment extends Fragment implements SelectListener{
                 list.add(d.toObject(User.class));
             }
             userAdapter.notifyDataSetChanged();
-        }).addOnFailureListener(e -> {
-            Toast.makeText(getActivity(), "Failed: "+e.getMessage(), Toast.LENGTH_SHORT).show();
-        });
+        }).addOnFailureListener(e -> Toast.makeText(getActivity(), "Failed: "+e.getMessage(), Toast.LENGTH_SHORT).show());
 
     }
 
@@ -100,7 +93,6 @@ public class UsersFragment extends Fragment implements SelectListener{
             public boolean onMenuItemClick(MenuItem menuItem) {
                 option = getOption(menuItem.getTitle().toString());
                 et_filter.setText("");
-                Toast.makeText(getActivity(), option, Toast.LENGTH_SHORT).show();
                 btn_menu.setText(menuItem.getTitle().toString());
                 return true;
             }
@@ -110,16 +102,16 @@ public class UsersFragment extends Fragment implements SelectListener{
 
     private String getOption(String item) {
 
-        if (item.contains("Ülke")){
+        if (item.contains(getText(R.string.country))){
             et_filter.setInputType(InputType.TYPE_CLASS_TEXT);
             return "country";
-        }if (item.contains("Şehir")) {
+        }if (item.contains(getText(R.string.city))) {
             et_filter.setInputType(InputType.TYPE_CLASS_TEXT);
             return "city";
-        }if (item.contains("Giriş Yılı")) {
+        }if (item.contains(getText(R.string.startyear))) {
             et_filter.setInputType(InputType.TYPE_CLASS_NUMBER);
             return "startyear";
-        }if (item.contains("Mezun Yılı")) {
+        }if (item.contains(getText(R.string.endyear))) {
             et_filter.setInputType(InputType.TYPE_CLASS_NUMBER);
             return "endyear";
         }

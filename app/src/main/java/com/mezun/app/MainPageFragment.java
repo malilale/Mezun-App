@@ -2,7 +2,6 @@ package com.mezun.app;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,8 +36,6 @@ public class MainPageFragment extends Fragment implements SelectListener {
         View view = inflater.inflate(R.layout.fragment_main_page, container, false);
         FloatingActionButton btn_addmedia = view.findViewById(R.id.btn_addMedia);
 
-
-
         btn_addmedia.setOnClickListener(view1 -> {
             Intent intent = new Intent(getActivity(),AddMediaActivity.class);
             startActivity(intent);
@@ -56,7 +53,6 @@ public class MainPageFragment extends Fragment implements SelectListener {
         return view;
     }
 
-
     @Override
     public void onStart() {
         super.onStart();
@@ -69,7 +65,8 @@ public class MainPageFragment extends Fragment implements SelectListener {
                 list.add(d.toObject(Media.class));
             }
             mediaAdapter.notifyDataSetChanged();
-        }).addOnFailureListener(e -> Toast.makeText(getActivity(), "Failed!", Toast.LENGTH_SHORT).show());
+        }).addOnFailureListener(e ->
+                Toast.makeText(getActivity(), "Failed!", Toast.LENGTH_SHORT).show());
     }
 
     @Override
@@ -78,33 +75,31 @@ public class MainPageFragment extends Fragment implements SelectListener {
         String  currentUid = user.getUid();
         Media media = list.get(position);
 
-        Toast.makeText(getActivity(), media.getTitle(), Toast.LENGTH_SHORT).show();
         if(media.getUid().matches(currentUid))
             showDeleteDialog(media);
-
     }
 
     private void showDeleteDialog(Media media) {
         AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-        alert.setTitle("Gönderiyi Sil");
-        alert.setMessage("Bu Gönderiyi silmek istediğinize emin misiniz?");
-        alert.setPositiveButton("Evet", (dialog, which) -> {
-            deleteMedia(media);
+        alert.setTitle(R.string.delete_media);
+        alert.setMessage(R.string.are_u_sure_delete_media);
+        alert.setPositiveButton(R.string.yes, (dialog, which) -> {
+            deleteMedia(media); //delete media
             dialog.dismiss();
         });
-        alert.setNegativeButton("Hayır", (dialog, which) -> dialog.dismiss());
+        alert.setNegativeButton(R.string.no, (dialog, which) -> dialog.dismiss());
         alert.show();
     }
 
     private void deleteMedia(Media media) {
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
         DocumentReference documentReference = firestore.collection("Media").document(media.getMediaId());
-        Log.i("!!!!",media.mediaId);
+
         documentReference.delete().addOnSuccessListener(unused -> {
             list.remove(media);
             mediaAdapter.notifyDataSetChanged();
-            Toast.makeText(getActivity(), "Başarıyla Silindi", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.delete_success, Toast.LENGTH_SHORT).show();
         }).addOnFailureListener(e ->
-                Toast.makeText(getActivity(), "Silme İşlemi Başarısız!", Toast.LENGTH_SHORT).show());
+                Toast.makeText(getActivity(), R.string.delete_unsuccess, Toast.LENGTH_SHORT).show());
     }
 }

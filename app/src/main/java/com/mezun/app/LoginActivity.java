@@ -26,6 +26,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        getSupportActionBar().setTitle(R.string.login);
 
         et_email = findViewById(R.id.et_email);
         et_password = findViewById(R.id.et_password);
@@ -47,47 +48,53 @@ public class LoginActivity extends AppCompatActivity {
 
         });
 
-        tv_register.setOnClickListener(view -> {
-            Intent intent = new Intent(LoginActivity.this,RegisterActivity.class);
-            startActivity(intent);
+        tv_register.setOnClickListener(view -> { //register user
+            sendToRegisterPage();
         });
 
-        tv_forgotPw.setOnClickListener(view -> recoverPasswordDialog());
+        tv_forgotPw.setOnClickListener(view -> //Recover password
+                recoverPasswordDialog());
+    }
+
+    private void sendToRegisterPage() {
+        Intent intent = new Intent(LoginActivity.this,RegisterActivity.class);
+        startActivity(intent);
     }
 
     private void recoverPasswordDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LinearLayout layout = new LinearLayout(this);
         final EditText et_dialog_email = new EditText(this);
-        et_dialog_email.setHint("E-Posta");
+        et_dialog_email.setHint(R.string.email);
         et_dialog_email.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
 
         layout.addView(et_dialog_email);
-        layout.setPadding(10,10,10,10);
+        layout.setPadding(20,10,10,10);
 
         builder.setView(layout);
 
-        builder.setPositiveButton("Gönder", (dialogInterface, i) -> {
+        builder.setPositiveButton(R.string.send, (dialogInterface, i) -> {
             String email_dialog = et_dialog_email.getText().toString().trim();
             recover(email_dialog);
         });
-        builder.setNegativeButton("İptal", (dialogInterface, i) -> dialogInterface.dismiss());
+        builder.setNegativeButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.dismiss());
         builder.create().show();
     }
 
     private void recover(String email) {
         mAuth.sendPasswordResetEmail(email).addOnCompleteListener(task -> {
-            if(task.isSuccessful())
-                Toast.makeText(LoginActivity.this, "E-Posta Gönderildi", Toast.LENGTH_SHORT).show();
-            else
-                Toast.makeText(LoginActivity.this, "E-Posta Gönderilemedi", Toast.LENGTH_SHORT).show();
+            if(task.isSuccessful()) {
+                Toast.makeText(LoginActivity.this, R.string.email_sent, Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(LoginActivity.this, R.string.email_cnt_sent, Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
     private void login(String email, String password) {
         mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(task -> {
             if(task.isSuccessful()) {
-                sendToMain();
+                sendToMain(); //Login successful
             }else {
                 Toast.makeText(LoginActivity.this, R.string.wrong_email_pw, Toast.LENGTH_SHORT).show();
             }
@@ -104,7 +111,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
+        
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user!=null)
             sendToMain();

@@ -7,9 +7,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -31,13 +29,11 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 public class EditProfileActivity extends AppCompatActivity {
     private String name,lastname,startyear,endyear,email,education,country,city,firm,job,social,tel,imgUrl;
@@ -130,7 +126,7 @@ public class EditProfileActivity extends AppCompatActivity {
         try{
             CamActivityResultLauncher.launch(camIntent);
         }catch (ActivityNotFoundException e){
-            Toast.makeText(EditProfileActivity.this,"Uygulama yok!",Toast.LENGTH_SHORT).show();
+            Toast.makeText(EditProfileActivity.this,R.string.no_apps,Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -157,7 +153,7 @@ public class EditProfileActivity extends AppCompatActivity {
         try{
             galleryActivityResultLauncher.launch(pickIntent);
         }catch (ActivityNotFoundException e){
-            Toast.makeText(EditProfileActivity.this,"Uygulama yok!",Toast.LENGTH_SHORT).show();
+            Toast.makeText(EditProfileActivity.this,R.string.no_apps,Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -217,10 +213,10 @@ public class EditProfileActivity extends AppCompatActivity {
                             user.put("imgUrl", task1.getResult().toString());
                             documentReference.set(user)
                                     .addOnSuccessListener(unused ->{
-                                            Toast.makeText(EditProfileActivity.this,"Başarıyla Kaydedildi", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(EditProfileActivity.this,R.string.save_success, Toast.LENGTH_SHORT).show();
                                         finish();})
                                     .addOnFailureListener(e ->
-                                            Toast.makeText(EditProfileActivity.this,"Kaydedilemedi", Toast.LENGTH_SHORT).show());
+                                            Toast.makeText(EditProfileActivity.this,R.string.save_unsuccess, Toast.LENGTH_SHORT).show());
                         }
                     });
 
@@ -231,22 +227,20 @@ public class EditProfileActivity extends AppCompatActivity {
             user.put("imgUrl", imgUrl);
             documentReference.set(user)
                     .addOnSuccessListener(unused ->{
-                        Toast.makeText(EditProfileActivity.this,"Başarıyla Kaydedildi", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(EditProfileActivity.this,R.string.save_success, Toast.LENGTH_SHORT).show();
                         finish();})
                     .addOnFailureListener(e ->
-                            Toast.makeText(EditProfileActivity.this,"Kaydedilemedi", Toast.LENGTH_SHORT).show());
+                            Toast.makeText(EditProfileActivity.this,R.string.save_unsuccess, Toast.LENGTH_SHORT).show());
         }
 
         if(!email.matches(new_email)) {
             currentUser.updateEmail(new_email).addOnCompleteListener(task -> {
                 if(task.isSuccessful())
-                    Toast.makeText(EditProfileActivity.this,"E-Posta Başarıyla değişttirildi", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EditProfileActivity.this, R.string.email_change_success, Toast.LENGTH_SHORT).show();
                 else
-                    Toast.makeText(EditProfileActivity.this,"KE-Posta Değiştirilemedi", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EditProfileActivity.this, R.string.email_change_unsuccess, Toast.LENGTH_SHORT).show();
             });
         }
-
-
     }
 
     private void getNewdata() {

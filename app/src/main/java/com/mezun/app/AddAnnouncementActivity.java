@@ -3,18 +3,14 @@ package com.mezun.app;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -35,7 +31,7 @@ public class AddAnnouncementActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_announcement);
-        getSupportActionBar().setTitle("Duyuru Ekle");
+        getSupportActionBar().setTitle(R.string.add_post);
         initDatePicker();
 
         et_post = findViewById(R.id.et_post);
@@ -125,17 +121,10 @@ public class AddAnnouncementActivity extends AppCompatActivity {
         postMap.put("date",date);
         postMap.put("time",time);
         reference = FirebaseFirestore.getInstance().collection("Posts").document(postId);
-        reference.set(postMap).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void unused) {
-                Toast.makeText(AddAnnouncementActivity.this,"Başarıyla Gönderildi", Toast.LENGTH_SHORT).show();
-                finish();
-            }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(AddAnnouncementActivity.this,"Gönderilemedi", Toast.LENGTH_SHORT).show();
-                }
-            });
+        reference.set(postMap).addOnSuccessListener(unused -> {
+            Toast.makeText(AddAnnouncementActivity.this, R.string.send_success, Toast.LENGTH_SHORT).show();
+            finish();
+        }).addOnFailureListener(e ->
+                Toast.makeText(AddAnnouncementActivity.this, R.string.send_unsuccess, Toast.LENGTH_SHORT).show());
     }
 }
