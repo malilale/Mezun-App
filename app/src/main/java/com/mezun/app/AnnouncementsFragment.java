@@ -9,22 +9,32 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.concurrent.Executor;
 
 public class AnnouncementsFragment extends Fragment implements SelectListener{
     RecyclerView recyclerView;
@@ -59,8 +69,24 @@ public class AnnouncementsFragment extends Fragment implements SelectListener{
     @Override
     public void onStart() {
         super.onStart();
+        checkDates();
         getData();
         list.clear();
+    }
+
+    private void checkDates() {
+        long cutoff = System.currentTimeMillis();
+        Query dateOff = reference.orderBy("time").endAt(cutoff);
+        dateOff.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()) {
+                    for (QueryDocumentSnapshot qds : task.getResult())
+                        qds.getReference().delete();
+                }else
+                    Toast.makeText(getActivity(), "Failed dates", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void getData() {

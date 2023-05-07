@@ -38,6 +38,7 @@ public class AnnouncementAdapter extends RecyclerView.Adapter<AnnouncementAdapte
         holder.tv_name.setText(post.getFullname());
         holder.tv_email.setText(post.getEmail());
         holder.tv_post.setText(post.getPost());
+        holder.tv_date.setText(post.getDate());
 
         if(!post.getImgUrl().isEmpty())
             Picasso.get().load(post.getImgUrl()).into(holder.img_profile);
@@ -49,7 +50,7 @@ public class AnnouncementAdapter extends RecyclerView.Adapter<AnnouncementAdapte
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{
-        private TextView tv_name, tv_email, tv_post;
+        private TextView tv_name, tv_email, tv_post, tv_date;
         private ImageView img_profile;
         public MyViewHolder(@NonNull View itemView, SelectListener listener) {
             super(itemView);
@@ -57,6 +58,7 @@ public class AnnouncementAdapter extends RecyclerView.Adapter<AnnouncementAdapte
             tv_name = itemView.findViewById(R.id.anoun_fullname);
             tv_email = itemView.findViewById(R.id.anoun_email);
             tv_post = itemView.findViewById(R.id.anoun);
+            tv_date = itemView.findViewById(R.id.tv_date);
             img_profile = itemView.findViewById(R.id.img_anoun_profile);
 
 
