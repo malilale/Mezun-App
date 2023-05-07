@@ -79,7 +79,8 @@ public class EditProfileActivity extends AppCompatActivity {
                     Toast.makeText(EditProfileActivity.this, R.string.email_change_unsuccess, Toast.LENGTH_SHORT).show();
                     progressDialog.dismiss();
                 });
-            }
+            }else
+                loadDatasToDb(currentUser);
 
         });
         

@@ -209,7 +209,7 @@ public class RegisterActivity extends AppCompatActivity {
         mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(task -> {
             if(task.isSuccessful()) {
                 uploadData();
-                sendToMain();
+
             }else {
                 String error = Objects.requireNonNull(task.getException()).getMessage();
                 Toast.makeText(RegisterActivity.this, R.string.register_unsuccess, Toast.LENGTH_SHORT).show();
@@ -248,7 +248,8 @@ public class RegisterActivity extends AppCompatActivity {
                         documentReference.set(user)
                             .addOnSuccessListener(unused ->{
                                     Toast.makeText(RegisterActivity.this, R.string.save_success, Toast.LENGTH_SHORT).show();
-                                    progressDialog.dismiss();})
+                                    progressDialog.dismiss();
+                                    sendToMain();})
                             .addOnFailureListener(e ->{
                                     Toast.makeText(RegisterActivity.this, R.string.register_unsuccess, Toast.LENGTH_SHORT).show();
                                     progressDialog.dismiss();});
