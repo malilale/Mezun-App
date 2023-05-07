@@ -4,6 +4,7 @@ import static androidx.activity.result.contract.ActivityResultContracts.StartAct
 
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -33,6 +34,9 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -46,7 +50,7 @@ public class RegisterActivity extends AppCompatActivity {
     private ActivityResultLauncher<Intent> CamActivityResultLauncher,galleryActivityResultLauncher;
     public static final int CAMERA_PERM_CODE = 101;
     public static final int GALLERY_PERM_CODE = 102;
-
+    ProgressDialog progressDialog;
     private Uri image_uri;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private DocumentReference documentReference;
@@ -70,6 +74,9 @@ public class RegisterActivity extends AppCompatActivity {
         setCameraIntent();
         setPickFromGalleryIntent();
 
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage(getString(R.string.saving));
+
         img_addPhoto.setOnClickListener(view -> //add pfp from camera or gallery
                 showImagePickDialog());
 
@@ -86,6 +93,8 @@ public class RegisterActivity extends AppCompatActivity {
                     //error message
                     et_email.setError(getString(R.string.invaild_email));
                     et_email.setFocusable(true);
+                }else if(et_password.length()<6){
+                    Toast.makeText(RegisterActivity.this, R.string.password_minimum_char, Toast.LENGTH_SHORT).show();
                 }else {
                     registerUser(email,password);
                 }
@@ -112,10 +121,15 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     public Uri getImageUri( Bitmap inImage) { //get uri from bitmap by temporary file
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(RegisterActivity.this.getContentResolver(), inImage, UUID.randomUUID().toString() + ".png", "drawing");
-        return Uri.parse(path);
+        File tempFile = new File(getCacheDir(), "temp.png");
+        try {
+            FileOutputStream fos = new FileOutputStream(tempFile);
+            inImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.close();
+        } catch (IOException e) {
+        // Handle error
+        }
+        return Uri.fromFile(tempFile);
     }
 
     private void setCameraIntent() {
@@ -204,6 +218,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void uploadData() {
+        progressDialog.show();
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         StorageReference storageRef = FirebaseStorage.getInstance().getReference("Profile Images");
         //create document
@@ -231,10 +246,12 @@ public class RegisterActivity extends AppCompatActivity {
                     filePath.getDownloadUrl().addOnCompleteListener(task1 -> {
                         user.put("imgUrl", task1.getResult().toString().trim());
                         documentReference.set(user)
-                            .addOnSuccessListener(unused ->
-                                    Toast.makeText(RegisterActivity.this, R.string.save_success, Toast.LENGTH_SHORT).show())
-                            .addOnFailureListener(e ->
-                                    Toast.makeText(RegisterActivity.this, R.string.register_unsuccess, Toast.LENGTH_SHORT).show());
+                            .addOnSuccessListener(unused ->{
+                                    Toast.makeText(RegisterActivity.this, R.string.save_success, Toast.LENGTH_SHORT).show();
+                                    progressDialog.dismiss();})
+                            .addOnFailureListener(e ->{
+                                    Toast.makeText(RegisterActivity.this, R.string.register_unsuccess, Toast.LENGTH_SHORT).show();
+                                    progressDialog.dismiss();});
                     });
                 }
             });

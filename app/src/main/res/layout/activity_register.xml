@@ -27,7 +27,8 @@
             android:id="@+id/img_addPhoto"
             android:layout_width="140dp"
             android:layout_height="140dp"
-            android:padding="20dp"
+            android:scaleType="centerCrop"
+            android:padding="12dp"
             android:src="@drawable/add_a_photo" />
     </androidx.cardview.widget.CardView>
 

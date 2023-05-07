@@ -1,6 +1,7 @@
 package com.mezun.app;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -41,6 +42,7 @@ public class EditProfileActivity extends AppCompatActivity {
     private EditText et_name,et_lastname,et_startyear,et_endyear,et_email,et_education,et_country,et_city,et_firm,et_job,et_social,et_tel;
     private ImageView img_profile;
     private Button btn_save;
+    ProgressDialog progressDialog;
     private ActivityResultLauncher<Intent> CamActivityResultLauncher,galleryActivityResultLauncher;
     public static final int CAMERA_PERM_CODE = 101;
     public static final int GALLERY_PERM_CODE = 102;
@@ -59,12 +61,26 @@ public class EditProfileActivity extends AppCompatActivity {
         matchComponents();
         fillComponents();
 
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage(getString(R.string.saving));
+
 
         img_profile.setOnClickListener(view -> showImagePickDialog());
         
         btn_save.setOnClickListener(view -> {
             getNewdata();
-            loadDatasToDb();
+            progressDialog.show();
+            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+            if(!email.matches(new_email)) {
+                currentUser.updateEmail(new_email).addOnSuccessListener(unused -> {
+                    Toast.makeText(EditProfileActivity.this, R.string.email_change_success, Toast.LENGTH_SHORT).show();
+                    loadDatasToDb(currentUser);
+                }).addOnFailureListener(e -> {
+                    Toast.makeText(EditProfileActivity.this, R.string.email_change_unsuccess, Toast.LENGTH_SHORT).show();
+                    progressDialog.dismiss();
+                });
+            }
+
         });
         
     }
@@ -183,8 +199,8 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
 
-    private void loadDatasToDb() {
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+    private void loadDatasToDb(FirebaseUser currentUser) {
+
         StorageReference storageRef;
 
         Map<String, String> user = new HashMap<>();
@@ -214,9 +230,11 @@ public class EditProfileActivity extends AppCompatActivity {
                             documentReference.set(user)
                                     .addOnSuccessListener(unused ->{
                                             Toast.makeText(EditProfileActivity.this,R.string.save_success, Toast.LENGTH_SHORT).show();
-                                        finish();})
-                                    .addOnFailureListener(e ->
-                                            Toast.makeText(EditProfileActivity.this,R.string.save_unsuccess, Toast.LENGTH_SHORT).show());
+                                            progressDialog.dismiss();
+                                            finish();})
+                                    .addOnFailureListener(e ->{
+                                            Toast.makeText(EditProfileActivity.this,R.string.save_unsuccess, Toast.LENGTH_SHORT).show();
+                                            progressDialog.dismiss();});
                         }
                     });
 
@@ -228,19 +246,14 @@ public class EditProfileActivity extends AppCompatActivity {
             documentReference.set(user)
                     .addOnSuccessListener(unused ->{
                         Toast.makeText(EditProfileActivity.this,R.string.save_success, Toast.LENGTH_SHORT).show();
+                        progressDialog.dismiss();
                         finish();})
-                    .addOnFailureListener(e ->
-                            Toast.makeText(EditProfileActivity.this,R.string.save_unsuccess, Toast.LENGTH_SHORT).show());
+                    .addOnFailureListener(e ->{
+                            Toast.makeText(EditProfileActivity.this,R.string.save_unsuccess, Toast.LENGTH_SHORT).show();
+                            progressDialog.dismiss();});
         }
 
-        if(!email.matches(new_email)) {
-            currentUser.updateEmail(new_email).addOnCompleteListener(task -> {
-                if(task.isSuccessful())
-                    Toast.makeText(EditProfileActivity.this, R.string.email_change_success, Toast.LENGTH_SHORT).show();
-                else
-                    Toast.makeText(EditProfileActivity.this, R.string.email_change_unsuccess, Toast.LENGTH_SHORT).show();
-            });
-        }
+
     }
 
     private void getNewdata() {

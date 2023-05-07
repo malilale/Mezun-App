@@ -17,7 +17,6 @@
     <string name="users">Kullanıcılar</string>
     <string name="announcements">Duyurular</string>
     <string name="mainpage">Anasayfa</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="logout">Çıkış Yap</string>
     <string name="edit_profile">Profili Düzenle</string>
@@ -69,8 +68,11 @@
     <string name="Change">Değiştir</string>
     <string name="recover_pw_success">Şifre Başarıyla Değiştirildi</string>
     <string name="user_info">Kullanıcı Bilgileri</string>
-    <string name="sendind_media">İçerik Gönderiliyor...</string>
+    <string name="sending_media">İçerik Gönderiliyor...</string>
     <string name="please_pick_media">Lütfen bir fotoğraf veya video seçin</string>
-    <string name="email_change_success">E-Posta Başarıyla değişttirildi</string>
+    <string name="email_change_success">E-Posta Başarıyla değiştirildi</string>
     <string name="email_change_unsuccess">E-Posta Değiştirilemedi</string>
+    <string name="password_minimum_char">Şifeniz en az 6 karakterden oluşmalıdır!</string>
+    <string name="saving">Kaydediliyor</string>
+    <string name="loging">Giriş Yapılıyor</string>
 </resources>

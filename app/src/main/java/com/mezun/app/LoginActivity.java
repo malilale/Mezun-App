@@ -1,5 +1,6 @@
 package com.mezun.app;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
@@ -20,6 +21,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText et_email, et_password;
     private FirebaseAuth mAuth;
+    ProgressDialog progressDialog;
 
 
     @Override
@@ -27,6 +29,9 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         getSupportActionBar().setTitle(R.string.login);
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage(getString(R.string.loging));
 
         et_email = findViewById(R.id.et_email);
         et_password = findViewById(R.id.et_password);
@@ -92,10 +97,13 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void login(String email, String password) {
+        progressDialog.show();
         mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(task -> {
             if(task.isSuccessful()) {
+                progressDialog.dismiss();
                 sendToMain(); //Login successful
             }else {
+                progressDialog.dismiss();
                 Toast.makeText(LoginActivity.this, R.string.wrong_email_pw, Toast.LENGTH_SHORT).show();
             }
         });

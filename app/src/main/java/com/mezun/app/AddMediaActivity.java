@@ -66,7 +66,7 @@ public class AddMediaActivity extends AppCompatActivity {
         btn_sendmedia = findViewById(R.id.btn_sendmedia);
 
         progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage(getString(R.string.sendind_media));
+        progressDialog.setMessage(getString(R.string.sending_media));
 
         img_media.setOnClickListener(view -> askGalleryPermissions());
 
