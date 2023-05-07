@@ -10,6 +10,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -35,13 +40,29 @@ public class AnnouncementAdapter extends RecyclerView.Adapter<AnnouncementAdapte
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         Announcement post = list.get(position);
-        holder.tv_name.setText(post.getFullname());
-        holder.tv_email.setText(post.getEmail());
-        holder.tv_post.setText(post.getPost());
-        holder.tv_date.setText(post.getDate());
 
-        if(!post.getImgUrl().isEmpty())
-            Picasso.get().load(post.getImgUrl()).into(holder.img_profile);
+        String uid = post.getUid();
+
+        DocumentReference reference = FirebaseFirestore.getInstance().collection("Users").document(uid);
+
+        reference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                String name,lastname, imgUrl, email;
+                name = task.getResult().getString("name");
+                lastname = task.getResult().getString("lastname");
+                imgUrl = task.getResult().getString("imgUrl");
+                email = task.getResult().getString("email");
+
+                holder.tv_name.setText(name+" "+lastname);
+                holder.tv_email.setText(email);
+                holder.tv_post.setText(post.getPost());
+                holder.tv_date.setText(post.getDate());
+
+                if(!imgUrl.isEmpty())
+                    Picasso.get().load(imgUrl).into(holder.img_profile);
+            }
+        });
     }
 
     @Override

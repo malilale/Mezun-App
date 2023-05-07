@@ -28,7 +28,7 @@ public class AddAnnouncementActivity extends AppCompatActivity {
     private EditText et_post;
     private DatePickerDialog datePickerDialog;
     private Button dateButton;
-    String post, name, lastname, email, imgUrl, currentUid, date;
+    String post,  currentUid, date;
     private long  time;
 
     @Override
@@ -43,8 +43,8 @@ public class AddAnnouncementActivity extends AppCompatActivity {
         dateButton = findViewById(R.id.datePickerButton);
         dateButton.setText(getTodaysDate());
 
-
-        getCurrentUser();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        currentUid = user.getUid();
 
         btn_sendpost.setOnClickListener(view -> {
             post = et_post.getText().toString().trim();
@@ -64,7 +64,6 @@ public class AddAnnouncementActivity extends AppCompatActivity {
         DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-
                 date = makeDateString(day, month+1, year);
                 dateButton.setText(date);
                 Calendar c = Calendar.getInstance();
@@ -109,27 +108,10 @@ public class AddAnnouncementActivity extends AppCompatActivity {
         return "Ocak";
     }
 
+
     public void openDatePicker(View view)
     {
         datePickerDialog.show();
-    }
-
-    private void getCurrentUser() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        currentUid = user.getUid();
-        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-        DocumentReference documentReference = firestore.collection("Users").document(currentUid);
-
-        documentReference.get().addOnCompleteListener(task -> {
-            if(task.getResult().exists()){
-                name = task.getResult().getString("name");
-                lastname = task.getResult().getString("lastname");
-                email = task.getResult().getString("email");
-                imgUrl = task.getResult().getString("imgUrl");
-            }else{
-                Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     private void loadData() {
@@ -139,9 +121,6 @@ public class AddAnnouncementActivity extends AppCompatActivity {
         Map<String, Object> postMap = new HashMap<>();
         postMap.put("post",post);
         postMap.put("uid",currentUid);
-        postMap.put("fullname",name+" "+lastname);
-        postMap.put("email",email);
-        postMap.put("imgUrl",imgUrl);
         postMap.put("postId", postId);
         postMap.put("date",date);
         postMap.put("time",time);

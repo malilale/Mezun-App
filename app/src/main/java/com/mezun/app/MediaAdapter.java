@@ -36,9 +36,6 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.MyViewHolder
         this.list = list;
     }
 
-
-
-
     @NonNull
     @Override
     public MediaAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -51,11 +48,7 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.MyViewHolder
         Media media = list.get(position);
         String uid = media.getUid();
 
-
-      //  btn_delete = holder.itemView.findViewById(R.id.btn_delete);
-
         DocumentReference reference = FirebaseFirestore.getInstance().collection("Users").document(uid);
-
         reference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {

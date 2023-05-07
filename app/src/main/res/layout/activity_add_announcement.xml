@@ -28,9 +28,17 @@
        android:background="@drawable/edit_text_shape"
        android:hint="Duyuru..."/>
 
+    <TextView
+        android:layout_marginTop="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="18dp"
+        android:text="Duyuru son tarihini seçin:"/>
+
     <Button
         android:id="@+id/datePickerButton"
-        android:layout_marginVertical="30dp"
+        android:layout_marginVertical="10dp"
         android:layout_width="275dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
