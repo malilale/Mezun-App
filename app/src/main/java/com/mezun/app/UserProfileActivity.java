@@ -1,5 +1,7 @@
 package com.mezun.app;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -52,6 +54,23 @@ public class UserProfileActivity extends AppCompatActivity {
         tv_tel = findViewById(R.id.tv_usertel);
         tv_email = findViewById(R.id.tv_useremail);
         img_profile = findViewById(R.id.img_userprofile);
+
+        tv_tel.setOnClickListener(view1 ->{
+            String phone = tv_tel.getText().toString();
+            String message = "Merhaba,";
+            String url = "https://wa.me/" + phone + "?text=" + message;
+            Intent whatsappIntent = new Intent(Intent.ACTION_VIEW);
+            whatsappIntent.setData(Uri.parse(url));
+            startActivity(whatsappIntent);
+        });
+
+        tv_email.setOnClickListener(view1 -> {
+            String emailAddress = tv_email.getText().toString();
+            Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                    "mailto", emailAddress, null));
+            startActivity(Intent.createChooser(emailIntent, "Send email..."));
+
+        });
     }
     private void fillComponents() {
         tv_fullname.setText(fullname);

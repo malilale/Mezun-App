@@ -1,6 +1,7 @@
 package com.mezun.app;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.LayoutInflater;
@@ -57,6 +58,7 @@ public class ProfileFragment extends Fragment {
         tv_tel = view.findViewById(R.id.tv_tel);
         tv_email = view.findViewById(R.id.tv_email);
         img_profile = view.findViewById(R.id.img_profile);
+
 
 
 
